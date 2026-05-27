@@ -1,0 +1,8 @@
+- name: create Vault admin user for Redis
+  shell:
+    cmd: |
+      redis-cli <<EOF
+      auth {{redis_root_user}} {{redis_root_pass}}
+      acl setuser {{vault_db_user}} >{{vault_db_pass}} on -@all +acl
+      config rewrite
+      EOF

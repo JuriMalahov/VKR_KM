@@ -1,0 +1,39 @@
+---
+- hosts: load-balancer
+  become: yes
+  tasks:
+  - include_tasks: "{{tasks_dir}}/create_certs.yaml"
+
+- hosts: all
+  become: yes
+  tasks:
+  - include_tasks: "{{tasks_dir}}/update_ca_certificates.yaml"
+
+- hosts: load-balancer
+  become: yes
+  tasks:
+  - include_tasks: "{{tasks_dir}}/configure_lb_proxy.yaml"
+  - include_tasks: "{{tasks_dir}}/download_vault.yaml"
+
+- hosts: vault_cluster
+  become: yes
+  tasks:
+  - include_tasks: "{{tasks_dir}}/deploy_vault.yaml"
+
+- hosts: server
+  become: yes
+  tasks:
+  - include_tasks: "{{tasks_dir}}/deploy_sops.yaml"
+
+- hosts: database
+  becpme: yes
+  tasks:
+  - include_tasks: "{{tasks_dir}}/configure_{{database_name}}.yaml"
+
+- hosts: vault1
+  become: yes
+  tasks:
+  - include_tasks: "{{tasks_dir}}/authorization.yaml"
+  - include_tasks: "{{tasks_dir}}/sops_integration.yaml"
+  - name: Integrate Vault with selected database
+    include_tasks: "{{tasks_dir}}/{{database_name}}_integration.yaml"

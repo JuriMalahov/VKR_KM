@@ -1,0 +1,30 @@
+upstream vault_cluster {
+{% for host in groups['vault_cluster'] %}
+	server {{host}}:8200;
+{% endfor %}
+}
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	
+	ssl_certificate /etc/nginx/sites-available/load-balancer.crt;
+	ssl_certificate_key /etc/nginx/sites-available/load-balancer.key;
+	server_name vault-system;
+
+	location / {
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass https://vault_cluster/;
+	}
+}
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	listen 443 ssl default_server;
+	listen [::]:443 ssl default_server;
+	
+	ssl_certificate /etc/nginx/sites-available/load-balancer.crt;
+	ssl_certificate_key /etc/nginx/sites-available/load-balancer.key;
+	return 444;
+}

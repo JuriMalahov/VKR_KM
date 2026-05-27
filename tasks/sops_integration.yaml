@@ -1,0 +1,5 @@
+- name: enable transit secrets engine
+  command: vault secrets enable -path=sops transit
+
+- name: enable KV secrets engine for publishing
+  command: vault secrets enable -version=2 -path=secret/ kv

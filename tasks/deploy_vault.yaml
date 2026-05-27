@@ -1,0 +1,128 @@
+- name: copy Vault binary to /usr/local/bin
+  copy:
+    src: /tmp/vault
+    dst: /usr/local/bin/.
+    mode: '0755'
+
+- name: set vault commands autocomplete
+  command: vault -autocomplete-install
+- command: complete -C /usr/local/bin/vault vault
+
+- name: create Vault user
+  shell: useradd --system --shell /bin/false vault
+
+- name: create Vault directories
+  file:
+    path: /etc/vault.d
+    owner: vault
+    group: vault
+    state: directory
+    mode: '0755'
+- file:
+    path: /opt/vault/data
+    owner: vault
+    group: vault
+    state: directory
+    mode: '0755'
+- file:
+    path: /opt/vault/ssl
+    owner: vault
+    group: vault
+    state: directory
+    mode: '0755'
+
+- name: upload systemd service
+  copy:
+    src: "{{conf_dir}}/vault.service"
+    dest: /etc/systemd/system/vault.service
+
+- name: upload Vault configuration file
+  template:
+    src: "{{conf_dir}}/config.hcl"
+    dest: /etc/vault.d/config.hcl
+    owner: vault
+    group: vault
+    mode: '0644'
+
+- name: copy CA certificate
+  copy:
+    src: "{{certs_dir}}/vault-ca.crt"
+    dest: /opt/vault/ssl
+    owner: root
+    group: root
+    mode: '0644'
+- name: copy node certificate
+  copy:
+    src: "{{certs_dir}}/{{item}}.crt"
+    dest: /opt/vault/ssl
+    owner: root
+    group: root
+    mode: '0644'
+- name: copy node key
+  copy:
+    src: "{{certs_dir}}/{{item}}.key"
+    dest: /opt/vault/ssl
+    owner: root
+    group: vault
+    mode: '0640'
+
+- name: copy Vault node environment file
+  template:
+    src: "{{conf_dir}}/vault_environment"
+    dest: /etc/environment
+    mode: '0644'
+
+- name: activate environment variables
+  command: source /etc/environment
+
+- name: reload systemd configs
+  systemd_service:
+    daemon_reload: true
+
+- name: enable Vault service
+  systemd_service:
+    state: started
+    name: vault
+    enabled: true
+
+- name: init Vault on first node
+  command: vault operator init
+  when: inventory_hostname == "vault1"
+  register: vault_init_data
+
+- name: save Vault unseal keys and root token
+  copy:
+    content: "{{vault_init_data}}"
+    dest: ~/keys_and_token
+  when: inventory_hostname == "vault1"
+
+- name: unseal Vault
+  command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][0][14:]}}
+- command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][1][14:]}}
+- command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][2][14:]}}
+
+- name: login with root token
+  command: vault login {{hostvars['vault1']['vault_init_data']['stdout_lines'][6][20:]}}
+
+- name: upload Vault unseal script
+  template:
+    src: "{{conf_dir}}/vault_unseal.sh"
+    dest: /usr/local/bin/.
+    mode: '0755'
+
+- name: configure crontab
+  cron:
+    name: "Vault autounseal"
+    special_time: reboot
+    job: "/usr/local/bin/vault_unseal.sh"
+
+- name: create directory for audit logs
+  file:
+    path: /var/log/vault
+    owner: vault
+    group: vault
+    state: directory
+    mode: '0755'
+
+- name: enable Vault audit
+  command: vault audit enable file @{{conf_dir}}/audit.json

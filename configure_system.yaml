@@ -1,0 +1,25 @@
+---
+- hosts: vault1
+  become: yes
+  tasks:
+  - name: create SOPS keys
+    command: vault write sops/keys/{{item}} type=rsa-4096
+    loop: {{sops_keys}}
+
+  - name: create MariaDB roles
+    command: vault write database/roles/{{ item | split('/') | last }} db_name=mariadb creation_statements=@{{item}} revocation_statements="DROP USER '{{\'{{\'}}name{{\'}}\'}}'@'server';" default_ttl=3m max_ttl=3m
+    with_fileglob:
+      - "{{database_roles_dir}}/mariadb-*"
+    when: {{database_name}} == "mariadb"
+
+  - name: create PostgreSQL roles
+    command: vault write database/roles/{{ item | split('/') | last }} db_name=postgresql creation_statements=@{{item}} revocation_statements="REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM \"{{'{{'}}name{{'}}'}}\";DROP USER \"{{'{{'}}name{{'}}'}}\";" default_ttl=3m max_ttl=3m
+    with_fileglob:
+      - "{{database_roles_dir}}/postgresql-*"
+    when: {{database_name}} == "postgresql"
+
+  - name: create Redis roles
+    command: vault write database/roles/{{ item | split('/') | last }} db_name=redis creation_statements=@{{item}} default_ttl="3m" max_ttl="3m"
+    with_fileglob:
+      - "{{database_roles_dir}}/redis-*"
+    when: {{database_name}} == "redis"

@@ -1,0 +1,5 @@
+{
+  "file_path": "/var/log/vault/vault_audit.log",
+  "hmac_accessor": false,
+  "elide_list_responses": true
+}

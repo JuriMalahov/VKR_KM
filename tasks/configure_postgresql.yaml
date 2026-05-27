@@ -1,0 +1,19 @@
+- name: create Vault admin user for PostgreSQL
+  command: sudo -u {{postgresql_root_user}} psql -c "CREATE USER \"{{vault_db_user}}\" WITH PASSWORD '{{vault_db_pass}}' SUPERUSER;"
+
+- name: change PostgreSQL access settings
+  lineinfile:
+    path: /etc/postgresql/15/main/pg_hba.conf
+    line: "{{item}}"
+    state: present
+  loop:
+    - "host    all             all                     server          scram-sha-256"
+    - "host    all             vault-admin             vault-system    scram-sha-256"
+- lineinfile:
+    path: /etc/postgresql/15/main/pg_hba.conf
+    line: "host    all             vault-admin             server          reject"
+    insertbefore: "host    all             all                     server          scram-sha-256"
+    state: present
+
+- name: reload settings
+  command: sudo -u {{postgresql_root_user}} psql -c "SELECT pg_reload_conf();"

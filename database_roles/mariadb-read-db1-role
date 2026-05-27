@@ -1,0 +1,2 @@
+CREATE USER '{{name}}'@'server' IDENTIFIED BY '{{password}}';
+GRANT SELECT ON db1.* TO '{{name}}'@'server';

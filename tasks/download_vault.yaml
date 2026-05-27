@@ -1,0 +1,9 @@
+- name: download Vault binary
+  get_url:
+    url: https://mirror.yandex.ru/mirrors/releases.hashicorp.com/vault/2.0.0/vault_2.0.0_linux_amd64.zip
+    dest: /tmp/.
+
+- name: unzip Vault binary
+  unarchive:
+    src: /tmp/vault_2.0.0_linux_amd64.zip
+    dest: /tmp/.

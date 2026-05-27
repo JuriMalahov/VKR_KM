@@ -1,0 +1,86 @@
+- name: create directory for certificates
+  file:
+    path: "{{certs_dir}}"
+    state: directory
+    mode: '0755'
+
+- name: create CA key
+  openssl_privatekey:
+    path: "{{certs_dir}}/vault-ca.key"
+    passphrase: "{{ca_pass}}"
+    cipher: 'auto'
+    size: 2048
+
+- name: create CA certificate signing request
+  openssl_csr:
+    path: "{{certs_dir}}/vault-ca.csr"
+    privatekey_path: "{{certs_dir}}/vault-ca.key"
+    privatekey_passphrase: "{{ca_pass}}"
+    country_name: RU
+    common_name: vault-ca
+    use_common_name_for_san: false
+    basic_constraints:
+      - 'CA:TRUE'
+    basic_constraints_critical: true
+    key_usage:
+      - keyCertSign
+    key_usage_critical: true
+
+- name: create CA certificate
+  community.crypto.x509_certificate:
+    path: "{{certs_dir}}/vault-ca.crt"
+    csr_path: "{{certs_dir}}/vault-ca.csr"
+    privatekey_path: "{{certs_dir}}/vault-ca.key"
+    privatekey_passphrase: "{{ca_pass}}"
+    provider: selfsigned
+
+- name: create load-balancer key
+  openssl_privatekey:
+    path: "{{certs_dir}}/load-balancer.key"
+    size: 2048
+
+- name: create load-balancer CSR
+  openssl_csr:
+    path: "{{certs_dir}}/load-balancer.csr"
+    privatekey_path: "{{certs_dir}}/load-balancer.key"
+    country_name: RU
+    subject_alt_name:
+      - "DNS:vault-system"
+
+- name: sign load-balancer certificate
+  community.crypto.x509_certificate:
+    path: "{{certs_dir}}/load-balancer.crt"
+    csr_path: "{{certs_dir}}/load-balancer.csr"
+    provider: ownca
+    ownca_path: "{{certs_dir}}/vault-ca.crt"
+    ownca_privatekey_path: "{{certs_dir}}/vault-ca.key"
+    ownca_privatekey_passphrase: "{{ca_pass}}"
+    ownca_not_after: +365d
+    ownca_not_before: -1s
+
+- name: create vault nodes keys
+  openssl_privatekey:
+    path: "{{certs_dir}}/{{item}}.key"
+    size: 2048
+  loop: "{{groups['vault_cluster']}}"
+
+- name: create vault nodes CSRs
+  openssl_csr:
+    path: "{{certs_dir}}/{{item}}.csr"
+    privatekey_path: "{{certs_dir}}/{{item}}.key"
+    country_name: RU
+    subject_alt_name:
+      - "DNS:{{item}}"
+  loop: "{{groups['vault_cluster']}}"
+
+- name: sign vault nodes certificates
+  community.crypto.x509_certificate:
+    path: "{{certs_dir}}/{{item}}.crt"
+    csr_path: "{{certs_dir}}/{{item}}.csr"
+    provider: ownca
+    ownca_path: "{{certs_dir}}/vault-ca.crt"
+    ownca_privatekey_path: "{{certs_dir}}/vault-ca.key"
+    ownca_privatekey_passphrase: "{{ca_pass}}"
+    ownca_not_after: +365d
+    ownca_not_before: -1s
+  loop: "{{groups['vault_cluster']}}"

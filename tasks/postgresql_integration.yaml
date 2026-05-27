@@ -1,0 +1,5 @@
+- name: enable database secrets engine
+  command: vault secrets enable database
+
+- name: create PostgreSQL connection
+  command: vault write database/config/postgresql plugin_name=postgresql-database-plugin allowed_roles="postgresql-*" connection_url="postgresql://{{'{{'}}username{{'}}'}}:{{'{{'}}password{{'}}'}}@database:5432/postgres" username="{{vault_db_user}}" password="{{vault_db_pass}}" password_authentication="scram-sha-256"

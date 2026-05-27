@@ -1,0 +1,5 @@
+- name: enable database secrets engine
+  command: vault secrets enable database
+
+- name: create Redis connection
+  command: vault write database/config/redis plugin_name="redis-database-plugin" host="database" port=6379 username="{{vault_db_user}}" password="{{vault_db_pass}}" allowed_roles="redis-*"

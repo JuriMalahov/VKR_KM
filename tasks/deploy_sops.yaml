@@ -1,0 +1,15 @@
+- name: download SOPS binary
+  get_url:
+    url: https://github.com/getsops/sops/releases/download/v3.12.2/sops-v3.12.2.linux.amd64
+    dest: /usr/local/bin/sops
+    mode: '0755'
+
+- name: set VAULT_ADDR environment variable
+  copy:
+    src: 'export VAULT_ADDR=https://vault-system:8200'
+    dest: /etc/environment
+    mode: '0644'
+
+- name: activate environment variables
+  command: source /etc/environment
+

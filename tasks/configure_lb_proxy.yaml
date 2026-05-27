@@ -1,0 +1,24 @@
+- name: install Nginx
+  apt:
+    name: nginx
+
+- name: configure Nginx
+  template:
+    src: "{{conf_dir}}/default"
+    dest: /etc/nginx/sites-available/default
+    mode: '0644'
+
+- name: upload certificate
+  copy:
+    src: "{{certs_dir}}/load-balancer.crt"
+    dest: /etc/nginx/sites-available/load-balancer.crt
+    mode: '0644'
+
+- name: upload certificate key
+  copy:
+    src: "{{certs_dir}}/load-balancer.key"
+    dest: /etc/nginx/sites-available/load-balancer.key
+    mode: '0640'
+
+- name: restart Nginx
+  command: systemctl restart nginx

@@ -1,0 +1,6 @@
+{
+	"token_ttl": "15m",
+	"token_max_ttl": "15m",
+	"token_bound_cidrs": "10.0.1.0/24",
+	"policies": "postgresql-policy"
+}

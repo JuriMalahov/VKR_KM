@@ -1,0 +1,5 @@
+- name: enable database secrets engine
+  command: vault secrets enable database
+
+- name: create MariaDB connection
+  command: vault write database/config/mariadb plugin_name=mysql-database-plugin connection_url="{{'{{'}}username{{'}}'}}:{{'{{'}}password{{'}}'}}@tcp(database:3306)/" allowed_roles="mariadb-*" username="{{vault_db_user}}" password="{{vault_db_pass}}"

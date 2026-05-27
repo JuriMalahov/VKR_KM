@@ -1,0 +1,10 @@
+- name: copy CA certificate to ca-certificates directory
+  copy:
+    src: "{{certs_dir}}/vault-ca.crt"
+    dest: /usr/local/share/ca-certificates/
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: update CA certificates
+  command: update-ca-certificates
