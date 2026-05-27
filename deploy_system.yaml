@@ -26,7 +26,7 @@
   - include_tasks: "{{tasks_dir}}/deploy_sops.yaml"
 
 - hosts: database
-  becpme: yes
+  become: yes
   tasks:
   - include_tasks: "{{tasks_dir}}/configure_{{database_name}}.yaml"
 
