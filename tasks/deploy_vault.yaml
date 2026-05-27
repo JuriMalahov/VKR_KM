@@ -6,7 +6,7 @@
 
 - name: set vault commands autocomplete
   command: vault -autocomplete-install
-- command: complete -C /usr/local/bin/vault vault
+- shell: complete -C /usr/local/bin/vault vault
 
 - name: create Vault user
   shell: useradd --system --shell /bin/false vault
