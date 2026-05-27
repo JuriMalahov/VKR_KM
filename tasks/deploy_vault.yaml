@@ -1,7 +1,7 @@
 - name: copy Vault binary to /usr/local/bin
   copy:
     src: /tmp/vault
-    dst: /usr/local/bin/.
+    dest: /usr/local/bin/.
     mode: '0755'
 
 - name: set vault commands autocomplete
