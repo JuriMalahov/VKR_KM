@@ -53,14 +53,14 @@
     mode: '0644'
 - name: copy node certificate
   copy:
-    src: "{{certs_dir}}/{{item}}.crt"
+    src: "{{certs_dir}}/{{ansible_hostname}}.crt"
     dest: /opt/vault/ssl
     owner: root
     group: root
     mode: '0644'
 - name: copy node key
   copy:
-    src: "{{certs_dir}}/{{item}}.key"
+    src: "{{certs_dir}}/{{ansible_hostname}}.key"
     dest: /opt/vault/ssl
     owner: root
     group: vault
