@@ -38,6 +38,7 @@
   openssl_privatekey:
     path: "{{certs_dir}}/load-balancer.key"
     size: 2048
+    mode: '0644'
 
 - name: create load-balancer CSR
   openssl_csr:
@@ -62,6 +63,7 @@
   openssl_privatekey:
     path: "{{certs_dir}}/{{item}}.key"
     size: 2048
+    mode: '0644'
   loop: "{{groups['vault_cluster']}}"
 
 - name: create vault nodes CSRs
