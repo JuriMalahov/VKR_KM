@@ -96,8 +96,9 @@
 
 - name: save Vault unseal keys and root token
   copy:
-    content: "{{vault_init_data}}"
+    content: "{{vault_init_data.stdout}}"
     dest: ~/keys_and_token
+  become: false
   when: inventory_hostname == "vault1"
 
 - name: unseal Vault
