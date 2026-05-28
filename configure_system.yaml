@@ -1,5 +1,8 @@
 ---
 - hosts: vault1
+  environment:
+    VAULT_ADDR: https://vault1:8200
+    VAULT_CACERT: /opt/vault/ssl/vault-ca.crt
   tasks:
   - name: create SOPS keys
     command: vault write sops/keys/{{item}} type=rsa-4096
