@@ -20,11 +20,11 @@
 
 - name: write Vault policies
   command: vault policy write {{ item[:-5] }} /tmp/policy/{{item}}
-  loop: {{policy_files}}
+  loop: "{{policy_files}}"
 
 - name: enable Vault Approle authentication
   command: vault auth enable approle
 
 - name: write Vault approles
   command: vault write auth/approle/role/{{ item[:-5] }} @/tmp/approles/{{item}}
-  loop: {{approles_files}}
+  loop: "{{approles_files}}"
