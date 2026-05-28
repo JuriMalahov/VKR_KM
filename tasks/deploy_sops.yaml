@@ -6,9 +6,10 @@
 
 - name: set VAULT_ADDR environment variable
   copy:
-    src: 'export VAULT_ADDR=https://vault-system:8200'
+    src: "{{conf_dir}}/sops_environment"
     dest: /etc/environment
     mode: '0644'
 
 - name: activate environment variables
   shell: source /etc/environment
+  become: false
