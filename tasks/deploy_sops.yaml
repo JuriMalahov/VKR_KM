@@ -10,8 +10,8 @@
     line: "{{item}}"
     state: present
   loop:
-    - "host    all             all                     server          scram-sha-256"
-    - "host    all             vault-admin             vault-system    scram-sha-256"
+    - "export EDITOR=nano"
+    - "export VAULT_ADDR=https://vault-system"
 
 - name: activate environment variables
   shell: source /etc/environment
