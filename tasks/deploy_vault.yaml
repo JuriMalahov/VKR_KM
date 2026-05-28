@@ -7,6 +7,7 @@
 - name: set vault commands autocomplete
   command: vault -autocomplete-install
 - shell: complete -C /usr/local/bin/vault vault
+  become: false
 
 - name: create Vault user
   shell: useradd --system --shell /bin/false vault
@@ -74,6 +75,7 @@
 
 - name: activate environment variables
   shell: source /etc/environment
+  become: false
 
 - name: reload systemd configs
   systemd_service:
@@ -87,6 +89,7 @@
 
 - name: init Vault on first node
   command: vault operator init
+  become: false
   when: inventory_hostname == "vault1"
   register: vault_init_data
 
@@ -98,11 +101,15 @@
 
 - name: unseal Vault
   command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][0][14:]}}
+  become: false
 - command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][1][14:]}}
+  become: false
 - command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][2][14:]}}
+  become: false
 
 - name: login with root token
   command: vault login {{hostvars['vault1']['vault_init_data']['stdout_lines'][6][20:]}}
+  become: false
 
 - name: upload Vault unseal script
   template:
@@ -126,3 +133,4 @@
 
 - name: enable Vault audit
   command: vault audit enable file @{{conf_dir}}/audit.json
+  become: false
