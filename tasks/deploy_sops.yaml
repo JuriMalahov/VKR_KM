@@ -11,5 +11,4 @@
     mode: '0644'
 
 - name: activate environment variables
-  command: source /etc/environment
-
+  shell: source /etc/environment
