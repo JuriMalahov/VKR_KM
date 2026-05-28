@@ -6,6 +6,7 @@
 
 - name: set vault commands autocomplete
   command: vault -autocomplete-install
+  become: false
 - shell: complete -C /usr/local/bin/vault vault
   become: false
 
@@ -131,6 +132,12 @@
     state: directory
     mode: '0755'
 
+- name: copy Vault audit configuration file
+  copy:
+    src: "{{conf_dir}}/audit.json"
+    dest: /tmp/audit.json
+    mode: '0644'
+
 - name: enable Vault audit
-  command: vault audit enable file @{{conf_dir}}/audit.json
+  command: vault audit enable file @/tmp/audit.json
   become: false
