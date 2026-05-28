@@ -1,2 +1,2 @@
-export VAULT_ADDR=https://{{item}}:8200
+export VAULT_ADDR=https://{{ansible_hostname}}:8200
 export VAULT_CACERT=/opt/vault/ssl/vault-ca.crt
