@@ -17,6 +17,9 @@
 
 - hosts: vault_cluster
   become: yes
+  environment:
+    VAULT_ADDR: https://vault1:8200
+    VAULT_CACERT: /opt/vault/ssl/vault-ca.crt
   tasks:
   - include_tasks: "{{tasks_dir}}/deploy_vault.yaml"
 
@@ -31,6 +34,9 @@
   - include_tasks: "{{tasks_dir}}/configure_{{database_name}}.yaml"
 
 - hosts: vault1
+  environment:
+    VAULT_ADDR: https://vault1:8200
+    VAULT_CACERT: /opt/vault/ssl/vault-ca.crt
   tasks:
   - include_tasks: "{{tasks_dir}}/authorization.yaml"
   - include_tasks: "{{tasks_dir}}/sops_integration.yaml"
