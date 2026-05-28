@@ -4,11 +4,14 @@
     dest: /usr/local/bin/sops
     mode: '0755'
 
-- name: set VAULT_ADDR environment variable
-  copy:
-    src: "{{conf_dir}}/sops_environment"
-    dest: /etc/environment
-    mode: '0644'
+- name: add environment variables for SOPS
+  lineinfile:
+    path: /etc/environment
+    line: "{{item}}"
+    state: present
+  loop:
+    - "host    all             all                     server          scram-sha-256"
+    - "host    all             vault-admin             vault-system    scram-sha-256"
 
 - name: activate environment variables
   shell: source /etc/environment
