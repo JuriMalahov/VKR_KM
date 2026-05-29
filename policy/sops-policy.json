@@ -1,3 +1,6 @@
 path "sops/*" {
 	capabilities = [ "update" ]
 }
+path "secret/*" {
+	capabilities = [ "create", "update" ]
+}
