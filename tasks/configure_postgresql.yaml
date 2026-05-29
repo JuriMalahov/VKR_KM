@@ -7,12 +7,12 @@
     line: "{{item}}"
     state: present
   loop:
-    - "host    all             all             server          scram-sha-256"
-    - "host    all             vault-admin     vault-system    scram-sha-256"
+    - "host    all             all             server                  scram-sha-256"
+    - "host    all             vault-admin     vault-system            scram-sha-256"
 - lineinfile:
     path: /etc/postgresql/15/main/pg_hba.conf
-    line: "host    all             vault-admin     server          reject"
-    insertbefore: "host    all             all             server          scram-sha-256"
+    line: "host    all             vault-admin     server                  reject"
+    insertbefore: "host    all             all             server                  scram-sha-256"
     state: present
 
 - name: reload settings
