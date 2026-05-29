@@ -1,3 +1,5 @@
+ca_pass: secret_ca_pass
+
 # Доступные базы данных на выбор: mariadb, postgresql, redis
 database_name: mariadb
 
