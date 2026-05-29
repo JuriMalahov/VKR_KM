@@ -94,13 +94,6 @@
   when: inventory_hostname == "vault1"
   register: vault_init_data
 
-- name: save Vault unseal keys and root token
-  copy:
-    content: "{{vault_init_data.stdout}}"
-    dest: ~/keys_and_token
-  become: false
-  when: inventory_hostname == "vault1"
-
 - name: unseal Vault
   command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][0][14:]}}
   become: false
