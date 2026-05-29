@@ -1,0 +1,18 @@
+# Доступные базы данных на выбор: mariadb, postgresql, redis
+database_name: mariadb
+
+mariadb_root_user: root
+mariadb_root_pass: p@ssw0rd
+
+postgresql_root_user: postgres
+
+redis_root_user: default
+redis_root_pass: p@ssw0rd
+
+vault_db_user: vault-admin
+vault_db_pass: p@ssw0rd
+
+sops_keys:
+  - key1
+  - key2
+  - key3
