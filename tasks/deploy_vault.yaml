@@ -94,40 +94,19 @@
   when: inventory_hostname == "vault1"
   register: vault_init_data
 
-- name: unseal Vault
-  command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][0][14:]}}
-  become: false
-  
-- command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][1][14:]}}
-  become: false
-  
-- command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][2][14:]}}
-  become: false
-  when: inventory_hostname == "vault1"
-
-- pause:
-    seconds: 5
-
-- command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][2][14:]}}
-  become: false
-  when: inventory_hostname == "vault2"
-
-- pause:
-    seconds: 5
-
-- command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][2][14:]}}
-  become: false
-  when: inventory_hostname == "vault3"
-
-- name: login with root token
-  command: vault login {{hostvars['vault1']['vault_init_data']['stdout_lines'][6][20:]}}
-  become: false
-
 - name: upload Vault unseal script
   template:
     src: "{{conf_dir}}/vault_unseal.sh"
     dest: /usr/local/bin/.
     mode: '0755'
+
+- name: unseal Vault
+  command: /usr/local/bin/vault_unseal.sh
+  become: false
+
+- name: login with root token
+  command: vault login {{hostvars['vault1']['vault_init_data']['stdout_lines'][6][20:]}}
+  become: false
 
 - name: configure crontab
   cron:
