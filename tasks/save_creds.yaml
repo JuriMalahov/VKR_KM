@@ -1,0 +1,14 @@
+- name: save Vault unseal keys and root token
+  copy:
+    content: "{{hostvars['vault1'].vault_init_data.stdout}}\n"
+    dest: ~/keys_and_token
+
+- name: save Vault role id and secret id for SOPS AppRole
+  copy:
+    content: "{{hostvars['vault1'].sops_role_id.stdout}}\n{{hostvars['vault1'].sops_secret_id.stdout}}\n"
+    dest: ~/sops_approle_creds
+
+- name: save Vault role id and secret id for database AppRole
+  copy:
+    content: "{{hostvars['vault1'].db_role_id.stdout}}\n{{hostvars['vault1'].db_secret_id.stdout}}\n"
+    dest: ~/database_approle_creds
