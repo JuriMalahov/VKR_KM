@@ -103,10 +103,20 @@
 - name: unseal Vault
   command: /usr/local/bin/vault_unseal.sh
   become: false
+  when: inventory_hostname == "vault1"
+
+- command: /usr/local/bin/vault_unseal.sh
+  become: false
+  when: inventory_hostname == "vault2"
+
+- command: /usr/local/bin/vault_unseal.sh
+  become: false
+  when: inventory_hostname == "vault3"
 
 - name: login with root token
   command: vault login {{hostvars['vault1']['vault_init_data']['stdout_lines'][6][20:]}}
   become: false
+  when: inventory_hostname == "vault1"
 
 - name: configure crontab
   cron:
