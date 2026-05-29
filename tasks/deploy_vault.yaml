@@ -104,13 +104,21 @@
 - name: unseal Vault
   command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][0][14:]}}
   become: false
-  serial: 1
+  
 - command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][1][14:]}}
   become: false
-  serial: 1
+  
 - command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][2][14:]}}
   become: false
-  serial: 1
+  when: inventory_hostname == "vault1"
+
+- command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][2][14:]}}
+  become: false
+  when: inventory_hostname == "vault2"
+
+- command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][2][14:]}}
+  become: false
+  when: inventory_hostname == "vault3"
 
 - name: login with root token
   command: vault login {{hostvars['vault1']['vault_init_data']['stdout_lines'][6][20:]}}
