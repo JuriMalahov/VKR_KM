@@ -4,4 +4,3 @@ certs_dir: "{{playbook_dir}}/certs"
 policy_dir: "{{playbook_dir}}/policy"
 approles_dir: "{{playbook_dir}}/approles"
 database_roles_dir: "{{playbook_dir}}/database_roles"
-ca_pass: secret_ca_pass
