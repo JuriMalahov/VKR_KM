@@ -48,3 +48,7 @@
   - include_tasks: "{{tasks_dir}}/sops_integration.yaml"
   - name: Integrate Vault with selected database
     include_tasks: "{{tasks_dir}}/{{database_name}}_integration.yaml"
+
+- hosts: server
+  tasks:
+  - include_tasks: "{{tasks_dir}}/save_creds.yaml"
