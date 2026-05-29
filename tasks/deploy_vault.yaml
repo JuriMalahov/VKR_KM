@@ -104,6 +104,11 @@
 - name: unseal Vault
   command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][0][14:]}}
   become: false
+  register: unsout
+- debug:
+    var: unsout
+- debug:
+    var: hostvars['vault1']['vault_init_data']['stdout_lines'][0][14:]
 - command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][1][14:]}}
   become: false
 - command: vault operator unseal {{hostvars['vault1']['vault_init_data']['stdout_lines'][2][14:]}}
