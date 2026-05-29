@@ -33,3 +33,19 @@
 - name: write database approle
   command: vault write auth/approle/role/{{ database_name }}-approle @/tmp/approles/{{database_name}}-approle.json
   
+- name: get SOPS approle role_id
+  command: vault read auth/approle/role/sops-approle/role-id
+  register: sops_role_id
+
+- name: get SOPS approle secret_id
+  command: vault write -f auth/approle/role/sops-approle/secret-id
+  register: sops_secret_id
+
+- name: get database approle role_id
+  command: vault read auth/approle/role/{{database_name}}-approle/role-id
+  register: db_role_id
+
+- name: get database approle secret_id
+  command: vault write -f auth/approle/role/{{database_name}}-approle/secret-id
+  register: db_secret_id
+  
