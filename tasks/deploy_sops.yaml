@@ -10,7 +10,7 @@
     line: "{{item}}"
     state: present
   loop:
-    - "export EDITOR=nano"
+    - "export SOPS_EDITOR=nano"
     - "export VAULT_ADDR=https://vault-system"
 
 - name: activate environment variables
