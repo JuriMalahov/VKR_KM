@@ -2,7 +2,7 @@
 - hosts: load-balancer
   become: yes
   vars_files:
-    - custom_vars.yaml
+    - ../custom_vars.yaml
   tasks:
   - include_tasks: "{{tasks_dir}}/create_certs.yaml"
 
@@ -33,7 +33,7 @@
 - hosts: database
   become: yes
   vars_files:
-    - custom_vars.yaml
+    - ../custom_vars.yaml
   tasks:
   - include_tasks: "{{tasks_dir}}/configure_{{database_name}}.yaml"
 
@@ -42,7 +42,7 @@
     VAULT_ADDR: https://vault1:8200
     VAULT_CACERT: /opt/vault/ssl/vault-ca.crt
   vars_files:
-    - custom_vars.yaml
+    - ../custom_vars.yaml
   tasks:
   - include_tasks: "{{tasks_dir}}/authorization.yaml"
   - include_tasks: "{{tasks_dir}}/sops_integration.yaml"
